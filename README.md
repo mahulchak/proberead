@@ -1,7 +1,7 @@
 # Fetch-long-reads-mapping-to-an-interval
 A light weight utility program to extract long reads that span given genomic intervals
 
-<i>Probem1</i> is a light weight program that takes a <i><a href="https://github.com/PacificBiosciences/blasr">BLASR</a></i> alignment output and a space delimited genomic interval file to find reads that span each genomic interval. This can be used to find read coverage of a given region (for as many regions as you want). Subsequently, one could use this to validate called variants in a high throughput manner.
+<i>Probem1</i> is a light weight program that takes output from a long or a short read aligner e.g.<i><a href="https://github.com/PacificBiosciences/blasr">BLASR</a></i>, <i><a href="http://bio-bwa.sourceforge.net/">bwa</a></i>, <i><a href="http://bowtie-bio.sourceforge.net/bowtie2/index.shtml">bowtie2</a></i> etc. and a space delimited genomic interval file to find reads that span each genomic interval. This can be used to find read coverage of a given region (for as many regions as you want). Subsequently, one could use this to validate called variants or assembly of a genomic region in a high throughput manner.
 
 1. Compile the program
 
@@ -9,9 +9,18 @@ A light weight utility program to extract long reads that span given genomic int
    ```
       g++ -Wall -std=c++0x probem1.cpp -o probem1
    ```
- 2. Process the inputs
+ 2. Generate alignment
+    
+    For simplicity, I am going to demonstrate how to work with the m1 output (see <i><a href="https://github.com/PacificBiosciences/blasr">BLASR</a></i> documentation for the details on m1 output format) from a <i>blasr</i> run. One can use any other alignment file format like sam. First, align the long reads to your assembly using <i>BLASR</i>.
+   ```
+      blasr reads.fasta assembly.fasta -bestn 1 -m 1 -nproc (# of cores) > foo.m1
+   ```
+   Here reads can be uncorrected raw reads or corrected reads from <i><a href="https://github.com/marbl/canu">canu</a></i> or <i><a href="https://github.com/PacificBiosciences/FALCON">Falcon</a></i> or <i><a href="https://github.com/xiaochuanle/MECAT">MECAT</a></i>.
+    
  
-    For simplicity, the m1 output (see <i><a href="https://github.com/PacificBiosciences/blasr">BLASR</a></i> documentation for the details on m1 output format) from the <i>blasr</i> run is formatted like this -
+ 3. Process the inputs
+ 
+    The alignment is processed using a simple <i>awk</i> command. The <i>awk</i> command generates a space delimited file with necessary alignment information. The example shown here is based on m1 alignment format, but can be created from any other alignment file. It is formatted like this -
     ```
        awk '{print $1" "$2" "$7" "$8" "$12}' foo.m1 > foo.filtered.m1
     ```
