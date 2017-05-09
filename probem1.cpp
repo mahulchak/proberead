@@ -32,8 +32,14 @@ struct sv{
 
 void findRead(vector<sv> & vs, vector<rpos> & vr); //reports reads overlapping a given interval
 
-int main()
+int main(int argc, char * argv[])
 {
+	if(argc <2)
+	{
+		cerr<<"Usage: "<<argv[0]<<" foo.filtered.m1 foo.tsv"<<endl;
+		exit(EXIT_FAILURE);
+	}
+	
 	vector<rpos> bmap; //bmap is blasr alignment result
 	vector<sv> svmap;
 	
@@ -47,7 +53,8 @@ int main()
 
 	ifstream fin;
 	//fin.open("a4.filtered.mito.m1");
-	fin.open("a4.a4asm.filtered.m1");
+	//fin.open("a4.a4asm.filtered.m1");
+	fin.open(argv[1]);
 	while(getline(fin,str))
 	{
 		pos = str.find(' ');
@@ -76,7 +83,8 @@ int main()
 
 	sort(bmap.begin(),bmap.end());
 	
-	fin.open("foo.bed");//for the genomic intervals containing the SVs
+	//fin.open("foo.bed");//for the genomic intervals containing the SVs
+	fin.open(argv[2]);
 	while(getline(fin,str))
 	{	
 		pos = str.find(' ');	
