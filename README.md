@@ -1,4 +1,4 @@
-# Fetch-long-reads-mapping-to-an-interval
+# proberead
 A light weight utility program to extract long reads that span given genomic intervals
 
 <i>Probem1</i> is a light weight program that takes output from a long or a short read aligner e.g.<i><a href="https://github.com/PacificBiosciences/blasr">BLASR</a></i>, <i><a href="http://bio-bwa.sourceforge.net/">bwa</a></i>, <i><a href="http://bowtie-bio.sourceforge.net/bowtie2/index.shtml">bowtie2</a></i> etc. and a space delimited genomic interval file to find reads that span each genomic interval. This can be used to find read coverage of a given region (for as many regions as you want). Subsequently, one could use this to validate called variants or assembly of a genomic region in a high throughput manner.
