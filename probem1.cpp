@@ -30,13 +30,13 @@ struct sv{
 	}
 };
 
-void findRead(vector<sv> & vs, vector<rpos> & vr); //reports reads overlapping a given interval
+void findRead(vector<sv> & vs, vector<rpos> & vr, char & c); //reports reads overlapping a given interval
 
 int main(int argc, char * argv[])
 {
 	if(argc <2)
 	{
-		cerr<<"Usage: "<<argv[0]<<" foo.filtered.m1 foo.tsv"<<endl;
+		cerr<<"Usage: "<<argv[0]<<" foo.filtered.m1 foo.tsv mode(R/C)"<<endl;
 		exit(EXIT_FAILURE);
 	}
 	
@@ -48,8 +48,8 @@ int main(int argc, char * argv[])
 
 	string str;
 	size_t pos,pos1;
-
-	int loc;
+	char mode = argv[3][0];
+	int loc = 0;
 
 	ifstream fin;
 	//fin.open("a4.filtered.mito.m1");
@@ -98,27 +98,41 @@ int main(int argc, char * argv[])
 		svmap.push_back(tsv);
 	}
 	sort(svmap.begin(),svmap.end());		
-	findRead(svmap,bmap);
+	findRead(svmap,bmap,mode);
 		
 return 0;
 }
 
 
-void findRead(vector<sv> & vs, vector<rpos> & vr)
+void findRead(vector<sv> & vs, vector<rpos> & vr, char & mode)
 {
 	sv tsv;//temporary sv interval
 	rpos trp;//temporary rpos
+	int cov =0;
 	for(unsigned int i=0;i<vs.size();i++) //from first to last sv interval
 	{
 		tsv = vs[i];
+		cov = 0;
 		for(unsigned int j=0;j<vr.size();j++)
 		{
 			trp = vr[j];
 		
 			if((tsv.cn == trp.chrom) && (tsv.st>trp.rs) && (tsv.e <trp.re))//if same chromosome and sv interval is contained within the read
 			{
-				cout<<tsv.cn<<" "<<tsv.st<<" "<<tsv.e<<" "<<trp.read<<" "<<trp.rs<<" "<<trp.re<<" "<<trp.re-trp.rs<<endl;
+				if(mode == 'R')
+				{
+					cout<<tsv.cn<<" "<<tsv.st<<" "<<tsv.e<<" "<<trp.read<<" "<<trp.rs<<" "<<trp.re<<" "<<trp.re-trp.rs<<endl;
+				}
+				if(mode == 'C')
+				{
+					cov++;
+				}
 			}
 		}
+		if(mode == 'C')
+		{
+			cout<<tsv.cn<<" "<<tsv.st<<" "<<tsv.e<<" "<<cov<<endl;
+		}
+		
 	}
 }
